@@ -1,24 +1,19 @@
 package com.kis
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import com.kis.adapters.RecycleViewMemAdapter
 import com.kis.classes.Meme
 import com.kis.databinding.ActivityMainBinding
-import com.kis.retrofit.MemsApiRetro
-import com.kis.retrofit.RetroRequestT
 import com.kis.viewModels.MainViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
 import okhttp3.*
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
-    // what we need show and like and save
-    // we get all lings with index in free api
 
     lateinit var viewModel: MainViewModel
     private final val TAG = "MainActivityModelTAG"
@@ -27,8 +22,8 @@ class MainActivity : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
     private var indexMem = 0
-
-    // create data base where we save card
+    // recycle view
+    private lateinit var recycleMemeAdapter: RecycleViewMemAdapter
 
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -42,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+
         // example from geek
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         // get one item mem
@@ -50,8 +46,11 @@ class MainActivity : AppCompatActivity() {
             answser = viewModel.getOneMemes(0)
             answser
         }
-
-
+        initRecycleView()
+        //realization recycle view
+        viewModel.listMemsUsr.observe(this) {
+            recycleMemeAdapter.submitList(it)
+        }
 
 
         viewModel.listMemsUsr.observe(this) {
@@ -84,6 +83,15 @@ class MainActivity : AppCompatActivity() {
             .into(binding.imageView)
         initBtnListeners()
 
+    }
+
+    private fun initRecycleView() {
+        val recycleViewMeme = binding.memRv
+        with(recycleViewMeme) {
+            recycleMemeAdapter = RecycleViewMemAdapter()
+            adapter = recycleMemeAdapter
+            
+        }
     }
 
     private fun getMems(indexMem: Int) {
