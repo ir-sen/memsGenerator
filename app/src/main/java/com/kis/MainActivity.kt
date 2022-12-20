@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
-    private var indexMem = 0
     // recycle view
     private lateinit var recycleMemeAdapter: RecycleViewMemAdapter
 
@@ -46,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             answser = viewModel.getOneMemes(0)
             answser
         }
+        hideHeadBar()
         initRecycleView()
         //realization recycle view
         viewModel.listMemsUsr.observe(this) {
@@ -113,13 +113,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun initBtnListeners() {
 
-        binding.nextBtn.setOnClickListener {
-            indexMem++
-            getMems(indexMem)
-        }
+
     }
 
-
+    private fun hideHeadBar() {
+        try {
+            this.supportActionBar!!.hide()
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+        }
+    }
 
 
 }
