@@ -1,4 +1,4 @@
-package com.kis.database
+package com.kis.data
 
 import android.app.Application
 import androidx.room.Database

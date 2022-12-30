@@ -9,8 +9,6 @@ import com.kis.classes.Meme
 import com.kis.retrofit.MemsApiRetro
 import com.kis.retrofit.RetroRequestT
 import kotlinx.coroutines.launch
-import kotlin.random.Random
-
 
 
 class MainViewModel: ViewModel() {
@@ -32,6 +30,12 @@ class MainViewModel: ViewModel() {
             return answer
         }
         return answer
+    }
+
+    fun deleteFromList(meme: Meme) {
+        viewModelScope.launch {
+            _listMemsUsr.value
+        }
     }
 
     fun getFiveMemes(randNumb: List<Int>) {

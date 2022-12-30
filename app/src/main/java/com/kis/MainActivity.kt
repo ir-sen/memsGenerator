@@ -23,23 +23,20 @@ class MainActivity : AppCompatActivity() {
 
     // recycle view
     private lateinit var recycleMemeAdapter: RecycleViewMemAdapter
-
+    // create binding inflate
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private var userListShow = listOf<Meme>()
     private val listRandN = mutableListOf<Int>()
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-
-        // example from geek
+        // request view mode
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        // get one item mem
+        // get one item mem with async thread background
         var answser: Meme = Meme()
         val deffRetro: Deferred<Meme> = scope.async {
             answser = viewModel.getOneMemes(0)
@@ -81,16 +78,47 @@ class MainActivity : AppCompatActivity() {
         Picasso.with(this)
             .load(logAnswer.url)
             .into(binding.imageView)
-        initBtnListeners()
 
     }
+
+//    private fun onSwipeListener(recycleList: RecyclerListener) {
+//        val swipeCallback = object : ItemTouchHelper.SimpleCallback(
+//            0,
+//            ItemTouchHelper.UP
+//        ) {
+//            override fun onMove(
+//                recyclerView: RecyclerView,
+//                viewHolder: RecyclerView.ViewHolder,
+//                target: RecyclerView.ViewHolder
+//            ): Boolean {
+//                val curentElement = recycleMemeAdapter.currentList[viewHolder.adapterPosition]
+//                scope.launch {
+//                    viewModel.deleteFromList(curentElement)
+//                }
+//            }
+//
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                TODO("Not yet implemented")
+//            }
+//        }
+//
+//    }
 
     private fun initRecycleView() {
         val recycleViewMeme = binding.memRv
         with(recycleViewMeme) {
             recycleMemeAdapter = RecycleViewMemAdapter()
             adapter = recycleMemeAdapter
-            
+        }
+
+        itemListener()
+    }
+
+    private fun itemListener() {
+        recycleMemeAdapter.onItemClickListener = {
+            Picasso.with(this)
+                .load(it.url)
+                .into(binding.imageView)
         }
     }
 
@@ -111,10 +139,6 @@ class MainActivity : AppCompatActivity() {
             .into(binding.imageView)
     }
 
-    private fun initBtnListeners() {
-
-
-    }
 
     private fun hideHeadBar() {
         try {

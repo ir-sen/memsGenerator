@@ -1,4 +1,4 @@
-package com.kis.database
+package com.kis.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -18,5 +18,8 @@ interface UserRoomDao {
 
     @Query("DELETE FROM mem_playersDb")
     suspend fun deleteAllFromUser()
+
+    @Query("DELETE FROM mem_playersDb WHERE id=:item")
+    suspend fun deleteSelectItem(item: String)
 
 }
