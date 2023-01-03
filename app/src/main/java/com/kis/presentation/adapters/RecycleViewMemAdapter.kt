@@ -1,4 +1,4 @@
-package com.kis.adapters
+package com.kis.presentation.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,7 +8,9 @@ import com.kis.R
 import com.kis.classes.Meme
 import com.squareup.picasso.Picasso
 
-class RecycleViewMemAdapter: androidx.recyclerview.widget.ListAdapter<Meme, MemeViewHolder>(DiffCallBackMem()) {
+class RecycleViewMemAdapter: androidx.recyclerview.widget.ListAdapter<Meme, MemeViewHolder>(
+    DiffCallBackMem()
+) {
 
 
     var onItemClickListener: ((Meme) -> Unit)? = null

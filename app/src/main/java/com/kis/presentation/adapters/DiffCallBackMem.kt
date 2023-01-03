@@ -1,4 +1,4 @@
-package com.kis.adapters
+package com.kis.presentation.adapters
 
 import androidx.recyclerview.widget.DiffUtil
 import com.kis.classes.Meme

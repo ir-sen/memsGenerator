@@ -1,6 +1,8 @@
 package com.kis.domain.use_cases
 
-class DelteAllToListUseCase(private val repository: MemRepository) {
+import com.kis.data.MemeRepositoryImpl
+
+class DeleteAllToListUseCase(private val repository: MemeRepositoryImpl) {
 
     suspend fun deleteAllToListUseCase() {
         repository.deleteAllToListUseCase()

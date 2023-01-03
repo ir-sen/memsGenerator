@@ -1,4 +1,4 @@
-package com.kis.adapters
+package com.kis.presentation.adapters
 
 import android.view.View
 import android.widget.ImageView
