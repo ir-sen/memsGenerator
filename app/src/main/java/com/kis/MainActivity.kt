@@ -2,7 +2,9 @@ package com.kis
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.kis.adapters.RecycleViewMemAdapter
 import com.kis.classes.Meme
@@ -15,7 +17,6 @@ import okhttp3.*
 class MainActivity : AppCompatActivity() {
 
 
-    lateinit var viewModel: MainViewModel
     private final val TAG = "MainActivityModelTAG"
     // add coroutine
     private val job = SupervisorJob()
@@ -29,13 +30,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val listRandN = mutableListOf<Int>()
+    private val viewModel: MainViewModel by viewModels()
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         // request view mode
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+//        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+
+
         // get one item mem with async thread background
         var answser: Meme = Meme()
         val deffRetro: Deferred<Meme> = scope.async {

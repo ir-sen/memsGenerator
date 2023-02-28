@@ -10,7 +10,6 @@ import com.kis.retrofit.MemsApiRetro
 import com.kis.retrofit.RetroRequestT
 import kotlinx.coroutines.launch
 
-
 class MainViewModel: ViewModel() {
 
     private final val TAG = "MainViewModelTAG"
