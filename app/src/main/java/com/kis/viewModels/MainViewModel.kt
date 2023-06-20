@@ -1,11 +1,18 @@
 package com.kis.viewModels
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kis.classes.Meme
+import com.kis.classes.state_clases.LoadState
+import com.kis.classes.state_clases.StateAnimation
 import com.kis.retrofit.MemsApiRetro
 import com.kis.retrofit.RetroRequestT
 import kotlinx.coroutines.launch
@@ -18,6 +25,27 @@ class MainViewModel: ViewModel() {
     val listMemsUsr: LiveData<List<Meme>>
         get() = _listMemsUsr
 
+    private var _memRotation = MutableLiveData<StateAnimation>()
+    val memRotation: LiveData<StateAnimation>
+        get() = _memRotation
+
+
+    private fun loadImageAnimate(view: ImageView) {
+        val animator = ObjectAnimator.ofFloat(view, View.ROTATION, 360f, 0f)
+        animator.duration = 1000
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator) {
+                super.onAnimationStart(animation)
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+                animator.start()
+            }
+        })
+        animator.start()
+
+    }
 
     suspend fun getAllMemes(): String {
         val quetesApi = RetroRequestT.getInstance().create(MemsApiRetro::class.java)
@@ -53,11 +81,9 @@ class MainViewModel: ViewModel() {
 
     suspend fun getOneMemes(numbM: Int): Meme {
         val requestApi = RetroRequestT.getInstance().create(MemsApiRetro::class.java)
-        var answer: String? = null
-        var meme = Meme()
+        val meme = Meme()
         val resultApiResuest = requestApi.getQuotesList()
         if (resultApiResuest != null) {
-            answer = resultApiResuest.body()?.`data`?.memes?.get(numbM)?.url
             val memesData = resultApiResuest.body()?.`data`?.memes
             meme.id = memesData?.get(numbM)?.id.toString()
             meme.url = memesData?.get(numbM)?.url.toString()
@@ -71,4 +97,6 @@ class MainViewModel: ViewModel() {
         }
         return meme
     }
+
+
 }

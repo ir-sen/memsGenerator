@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="theme_day_Prim">#D30B2023</color>
+    <color name="theme_day_PrimVar">#243234</color>
+    <color name="theme_colorSecondary">#D515D578</color>
+    <color name="theme_colorSecondaryVariant">#14F387</color>
 </resources>

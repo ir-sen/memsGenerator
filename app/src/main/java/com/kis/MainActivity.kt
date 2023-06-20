@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
+    private lateinit var animatorObject: ObjectAnimator
+
     // recycle view
     private lateinit var recycleMemeAdapter: RecycleViewMemAdapter
     // create binding inflate
@@ -34,13 +36,13 @@ class MainActivity : AppCompatActivity() {
 
     private val listRandN = mutableListOf<Int>()
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         // request view mode
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        initTools()
         // get one item mem with async thread background
         var answser: Meme = Meme()
         val deffRetro: Deferred<Meme> = scope.async {
@@ -49,30 +51,12 @@ class MainActivity : AppCompatActivity() {
         }
         hideHeadBar()
         initRecycleView()
-        //realization recycle view
+        //realization recycle view ( fill recycle view if list change )
         viewModel.listMemsUsr.observe(this) {
             recycleMemeAdapter.submitList(it)
         }
 
 
-        viewModel.listMemsUsr.observe(this) {
-            Log.d(TAG, "Observer list: $it")
-        }
-
-        binding.getRandomBtn.setOnClickListener{
-            animateGone()
-            listRandN.clear()
-            for (i in 0..4) {
-                val random = (0..99).random()
-                listRandN.add(random)
-            }
-            GlobalScope.launch {
-                val pe = viewModel.getFiveMemes(listRandN)
-                Log.d(TAG, "This is pe: $pe")
-            }
-
-            Log.d(TAG, listRandN.toString())
-        }
 
         val logAnswer = runBlocking {
             deffRetro.await()
@@ -80,23 +64,81 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, logAnswer.url)
 
 
-        Picasso.with(this)
-            .load(logAnswer.url)
-            .into(binding.choiceShowIv)
+//        Picasso.with(this)
+//            .load(logAnswer.url)
+//            .into(binding.choiceShowIv)
+        loadImageAnimate()
+    }
+
+    // create animate load image
+    private fun loadImageAnimate() {
+        animatorObject = ObjectAnimator.ofFloat(binding.choiceShowIv, View.ROTATION, 360f, 0f)
+        animatorObject.duration = 1000
+        animatorObject.repeatCount = 30
+        animatorObject.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator) {
+                super.onAnimationStart(animation)
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                super.onAnimationCancel(animation)
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+            }
+        })
+        animatorObject.start()
     }
 
     private fun animateGone() {
-        val animator = ObjectAnimator.ofFloat(binding.getRandomBtn, View.TRANSLATION_X, 360f)
+        val animator = ObjectAnimator.ofFloat(binding.getStartBtn, View.TRANSLATION_Y, 360f)
         animator.duration = 1000
         animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                binding.getRandomBtn.visibility = View.GONE
+                binding.getStartBtn.visibility = View.GONE
+                binding.getRandomBtn.visibility = View.VISIBLE
             }
         })
         animator.start()
 
+        val animator2 = ObjectAnimator.ofFloat(binding.choiceShowIv, View.ROTATION, 0f, 0f)
+        animator2.duration = 500
+        animator2.start()
+
     }
+
+
+    // init tools
+    private fun initTools() {
+        // start btn listener
+        binding.getStartBtn.setOnClickListener{
+            animateGone()
+            listRandN.clear()
+            fillRecycleView()
+            Log.d(TAG, listRandN.toString())
+        }
+
+
+        binding.getRandomBtn.setOnClickListener {
+            listRandN.clear()
+            fillRecycleView()
+        }
+    }
+
+    private fun fillRecycleView() {
+        animatorObject.cancel()
+        for (i in 0..4) {
+            val random = (0..99).random()
+            listRandN.add(random)
+        }
+        GlobalScope.launch {
+            val pe = viewModel.getFiveMemes(listRandN)
+            Log.d(TAG, "This is pe: $pe")
+        }
+    }
+
     // swipe listener
 //    private fun onSwipeListener(recycleList: RecyclerListener) {
 //        val swipeCallback = object : ItemTouchHelper.SimpleCallback(
@@ -121,6 +163,7 @@ class MainActivity : AppCompatActivity() {
 //
 //    }
 
+    // just init recycle View
     private fun initRecycleView() {
         binding.memRv.visibility = View.VISIBLE
         val recycleViewMeme = binding.memRv
@@ -140,7 +183,7 @@ class MainActivity : AppCompatActivity() {
                 .into(binding.choiceShowIv)
         }
     }
-
+    // function get mem with index
     private fun getMems(indexMem: Int) {
         var answser: Meme = Meme()
         val deffRetro: Deferred<Meme> = scope.async {
@@ -156,6 +199,11 @@ class MainActivity : AppCompatActivity() {
         Picasso.with(this)
             .load(logAnswer.url)
             .into(binding.choiceShowIv)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        animatorObject.cancel()
     }
 
 
